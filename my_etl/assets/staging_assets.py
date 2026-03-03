@@ -1,24 +1,42 @@
-from dagster import asset
 import pandas as pd
 import json
+from dagster import asset
 
 @asset(group_name="staging")
 def stg_clientes():
-    """Carga y filtra solo clientes activos."""
+    """Carga clientes, filtra activos y genera nombre_completo."""
     df = pd.read_csv("data/raw/clientes/clientes.csv")
-    return df[df['estado'] == 'activo'].copy()
+    # Filtramos por el campo 'estado' (True)
+    df = df[df['estado'] == True].copy()
+    
+    # Creamos nombre_completo según el formato del reporte
+    df['nombre_completo'] = df['nombre'] + " " + df['apellido']
+    
+    # Aseguramos tipo de dato para el join
+    df['id_cliente'] = df['id_cliente'].astype(int)
+    
+    return df[['id_cliente', 'nombre_completo']]
 
 @asset(group_name="staging")
 def stg_cablemodems():
-    """Flatten del JSON y redondeo de power."""
+    """Aplanado del JSON, hereda 'nodo' y filtra por 'encendido'."""
     with open("data/raw/cablemodems/cablemodems.json", "r") as f:
         data = json.load(f)
     
-    # Suponiendo que el JSON es una lista de objetos con 'modems' anidado
-    df = pd.json_normalize(data, record_path=['modems'], meta=['id_cliente'])
+    # 'nodo' y 'id_cliente' están en la raíz del objeto en tu JSON
+    df = pd.json_normalize(
+        data,
+        record_path=['cablemodems'],
+        meta=['id_cliente', 'nodo']
+    )
     
-    # Redondeo a 3 decimales según requerimiento
+    # Requerimiento: Redondear power a 3 decimales
     df['power'] = df['power'].astype(float).round(3)
     
-    # Solo cablemodems encendidos
-    return df[df['online'] == True].copy()
+    # Filtro: Solo cablemodems encendidos
+    df = df[df['encendido'] == True].copy()
+    
+    # Aseguramos tipo de dato para el join
+    df['id_cliente'] = df['id_cliente'].astype(int)
+    
+    return df
