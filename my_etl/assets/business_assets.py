@@ -24,7 +24,7 @@ def reporte_final(clientes, modems):
 
     df['estado_cm'] = df.apply(calcular_estado_cm, axis=1)
 
-    # Selección de columnas finales según formato pedido
+    # Selección de columnas finales según formato necesario para el reporte
     reporte = df[[
         'nombre_completo',
         'mac',

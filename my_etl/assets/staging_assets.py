@@ -9,7 +9,7 @@ def stg_clientes():
     # Filtramos por el campo 'estado' (True)
     df = df[df['estado'] == True].copy()
     
-    # Creamos nombre_completo según el formato del reporte
+    # Creamos nombre_completo según el formato necesario
     df['nombre_completo'] = df['nombre'] + " " + df['apellido']
     
     # Aseguramos tipo de dato para el join
