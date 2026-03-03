@@ -1,5 +1,9 @@
 # 4 - Desarrollo ETL
 
+Este proyecto implementa un data pipeline usando Dagster para dos fines, como orquestador y catálogo de datos. El proceso ETL ingesta datos en bruto en dos archivos de datos que se actualizan con cierta frecuencia:
+- Datos de cablemodems (JSON).
+- Datos de clientes (CSV).
+El proceso de transformación se realiza a través de una capa de staging, donde se limpian y transforman los datos, y luego se produce un reporte final con el análisis del estado de los cablemodems.
 
 
 ## Dagster
