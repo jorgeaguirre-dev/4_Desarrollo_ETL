@@ -9,3 +9,7 @@ venv/
 .env
 
 .dagster_home/
+
+# Archivos de data privados
+cablemodems.json
+clientes.csv
