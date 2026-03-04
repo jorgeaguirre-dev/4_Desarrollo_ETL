@@ -3,6 +3,13 @@
 Este proyecto implementa un data pipeline usando Dagster para dos fines, como orquestador y catálogo de datos. El proceso ETL ingesta datos en bruto en dos archivos de datos que se actualizan con cierta frecuencia.
 El proceso de transformación se realiza a través de una capa de staging, donde se limpian y transforman los datos, y luego se produce un reporte final con el análisis del estado de los cablemodems.
 
+## Características principales
+- ✅ Ingestión de datos automática
+- ✅ Transformación de datos multicapa
+- ✅ Disparo por autodetección de cambios en los archivos raw
+- ✅ Versionado de reporte histórico
+- ✅ Arquitectura de datos basado en assets
+
 ## Lógica de Negocio
 
 ### Reglas de Estado de Cablemodems
@@ -25,6 +32,7 @@ Los Modems que cumplen con ambos requisitos son clasificados como **"Correcto"**
 ```
 Datos en Bruto (Raw) → Capa Staging → Capa Business (BI)
 ```
+Se observan los Assets materializados y dando forma al Pipeline.
 
 ![DAG](img/DAG.png)
 
@@ -40,8 +48,10 @@ Datos en Bruto (Raw) → Capa Staging → Capa Business (BI)
    - `reporte_final` - Reporte Final con análisis de estado de cable modems
 
 ### Assets de Staging
-
+Se observa la materialización exitosa de los assets cada vez que sucede.
 ![Assets](img/Assets.png)
+
+Aquí se menciona en detalle que sucede en cada parte del pipeline y en que etapa del procesamiento ocurre.
 
 #### stg_clientes
 - Carga datos de clientes desde CSV
@@ -58,7 +68,7 @@ Datos en Bruto (Raw) → Capa Staging → Capa Business (BI)
 - Devuelve: `id_cliente`, `mac`, `nodo`, `power`, `delay`
 
 ### Assets de Business
-
+Aquí se genera el reporte final.
 #### reporte_final
 - Se realiza un join entre clientes y cablemodems (1:N)
 - Calcula `estado_cm` (estado de cable modem):
@@ -80,25 +90,21 @@ Datos en Bruto (Raw) → Capa Staging → Capa Business (BI)
 ![Reporte Actual](img/reporte_actual.png)
 
 ## Automatización
-
-![Automation](img/automation.png)
-
-## Features
-- ✅ Ingestión de datos automática
-- ✅ Transformación de datos multicapa
-- ✅ Disparo por autodetección de cambios en los archivos raw
-- ✅ Versionado de reporte histórico
-- ✅ Arquitectura de datos basado en assets
-
-### Sensor de Archivos Raw
-El sensor `cablemodem_json_sensor` monitorea cambios en el archivo JSON de cablemodems:
-
-![Sensor Tick](img/sensor_tick.png)
+La automatización del pipeline se basa en el uso del Sensor de cambios en los archivos de datos de la etapa Raw. Este sensor monitorea cada minuto si hay algún cambio y dispara las actualizaciones y recalculo en base a los nuevos datos. El proceso genera también un nuevo versionado del reporte para histórico.
 
 - Verifica cada 60 segundos
 - Detecta modificaciones de archivo usando el timestamp
 - Autimáticamente dispara el pipeline completo cuando el cambio es detectado
 - Ejecuta: `stg_cablemodems` → `stg_clientes` → `reporte_final`
+
+![Automation](img/automation.png)
+
+### Sensor de Archivos Raw
+Se aprecian los ticks donde se produce el monitoreo (chequeo) de la situación de los archivos en etapa Raw.
+
+![Sensor Tick](img/sensor_tick.png)
+
+El sensor `cablemodem_json_sensor` monitorea cambios en el archivo JSON de cablemodems.
 
 ![Log Autorun](img/log_autorun.png)
 
