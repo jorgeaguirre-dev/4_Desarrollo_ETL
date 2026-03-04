@@ -141,8 +141,8 @@ Para acceder a la UI desde un navegador ir a: http://localhost:3000
 ![Autorun](img/autorun.png)
 
 ## Mejoras Futuras
-- Agregar chequeos de validación de datos
-- Implementar manejo de errores y alertas
-- Agregar soporte para multiples fuentes de datos
-- Crear Dashboards analíticos
-- Implementar porcesamiento incremental para grandes datasets
+- [ ] Agregar chequeos de validación de datos
+- [ ] Implementar manejo de errores y alertas
+- [ ] Agregar soporte para multiples fuentes de datos
+- [ ] Crear Dashboards analíticos
+- [ ] Implementar porcesamiento incremental para grandes datasets
